@@ -20,8 +20,8 @@ public class RabbitMQListener {
         this.temperatureMonitoringService = temperatureMonitoringService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
-    public void handle(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) throws InterruptedException {
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME, concurrency = "2-3")
+    public void handle(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) {
         temperatureMonitoringService.processTemperatureReading(temperatureLogData);
     }
 
