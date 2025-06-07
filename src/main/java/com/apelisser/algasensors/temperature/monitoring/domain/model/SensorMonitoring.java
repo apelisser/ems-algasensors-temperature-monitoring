@@ -33,4 +33,8 @@ public class SensorMonitoring {
         this.enabled = false;
     }
 
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(enabled);
+    }
+
 }
