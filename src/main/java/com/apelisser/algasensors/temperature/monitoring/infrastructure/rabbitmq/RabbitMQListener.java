@@ -1,6 +1,7 @@
 package com.apelisser.algasensors.temperature.monitoring.infrastructure.rabbitmq;
 
 import com.apelisser.algasensors.temperature.monitoring.api.model.TemperatureLogData;
+import com.apelisser.algasensors.temperature.monitoring.domain.service.SensorAlertService;
 import com.apelisser.algasensors.temperature.monitoring.domain.service.TemperatureMonitoringService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -15,9 +16,12 @@ import java.util.Map;
 public class RabbitMQListener {
 
     private final TemperatureMonitoringService temperatureMonitoringService;
+    private final SensorAlertService sensorAlertService;
 
-    public RabbitMQListener(TemperatureMonitoringService temperatureMonitoringService) {
+    public RabbitMQListener(TemperatureMonitoringService temperatureMonitoringService,
+        SensorAlertService sensorAlertService) {
         this.temperatureMonitoringService = temperatureMonitoringService;
+        this.sensorAlertService = sensorAlertService;
     }
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_PROCESS_TEMPERATURE, concurrency = "2-3")
@@ -27,7 +31,7 @@ public class RabbitMQListener {
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_ALERTING, concurrency = "2-3")
     public void handleAlerting(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) {
-        log.info("Alerting: SensorId={} temperature={}", temperatureLogData.getSensorId(), temperatureLogData.getValue());
+        sensorAlertService.handleAlert(temperatureLogData);
     }
 
 }
