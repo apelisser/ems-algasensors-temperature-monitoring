@@ -20,9 +20,14 @@ public class RabbitMQListener {
         this.temperatureMonitoringService = temperatureMonitoringService;
     }
 
-    @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME, concurrency = "2-3")
-    public void handle(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) {
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_PROCESS_TEMPERATURE, concurrency = "2-3")
+    public void handleProcessTemperature(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) {
         temperatureMonitoringService.processTemperatureReading(temperatureLogData);
+    }
+
+    @RabbitListener(queues = RabbitMQConfig.QUEUE_ALERTING, concurrency = "2-3")
+    public void handleAlerting(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) {
+        log.info("Alerting: SensorId={} temperature={}", temperatureLogData.getSensorId(), temperatureLogData.getValue());
     }
 
 }
