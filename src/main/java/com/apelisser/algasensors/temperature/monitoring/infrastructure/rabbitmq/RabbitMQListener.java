@@ -26,6 +26,9 @@ public class RabbitMQListener {
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_PROCESS_TEMPERATURE, concurrency = "2-3")
     public void handleProcessTemperature(@Payload TemperatureLogData temperatureLogData, @Headers Map<String, Object> headers) {
+        if (temperatureLogData.getValue() == 10.5f) {
+            throw new RuntimeException("Error processing temperature. Temperature value is 10.5");
+        }
         temperatureMonitoringService.processTemperatureReading(temperatureLogData);
     }
 

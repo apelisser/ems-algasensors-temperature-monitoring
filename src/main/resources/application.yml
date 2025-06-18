@@ -26,7 +26,7 @@ spring:
       simple:
         prefetch: 2
         retry:
-          enabled: 'false'
+          enabled: 'true'
           initial-interval: 10s
           max-interval: 20s
           multiplier: 2
